@@ -1,6 +1,6 @@
 package com.emrislm.yuiidroid;
 
-import android.os.AsyncTask;
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -13,25 +13,30 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
+import android.widget.AdapterView;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
+import com.squareup.picasso.Picasso;
+
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class AnimeSearchFragment extends Fragment implements TextView.OnEditorActionListener, View.OnClickListener {
+public class AnimeSearchFragment extends Fragment implements TextView.OnEditorActionListener, AdapterView.OnItemClickListener {
 
-    private final String URL_STRING = "https://api.jikan.moe/v3/anime/2335";
+    private String URL_STRING = "https://api.jikan.moe/v3/search/anime?q=";
     private Anime tempAnime;
+    private ArrayList<Anime> animeList;
 
     // define variables for the widgets
     private EditText editText_animeInput;
-    private TextView textView_animeTitle;
-    private TextView textView_animeEpisodes;
+    private ListView listView_animesListView;
 
     private static final String TAG = "AnimeSearchFragment";
 
@@ -49,11 +54,11 @@ public class AnimeSearchFragment extends Fragment implements TextView.OnEditorAc
 
         // get references to the widgets
         editText_animeInput = (EditText) view.findViewById(R.id.EditText_animeInput);
-        textView_animeTitle = (TextView) view.findViewById(R.id.TextView_animeTitle);
-        textView_animeEpisodes = (TextView) view.findViewById(R.id.TextView_animeEpisodes);
+        listView_animesListView = (ListView) view.findViewById(R.id.ListView_animesListView);
 
         // set the listeners
         editText_animeInput.setOnEditorActionListener(this);
+        listView_animesListView.setOnItemClickListener(this);
 
         return view;
     }
@@ -61,43 +66,93 @@ public class AnimeSearchFragment extends Fragment implements TextView.OnEditorAc
     @Override
     public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
         if (actionId == EditorInfo.IME_ACTION_DONE) {
-            Log.d("dinges", "ACTION GEDRUKT");
-            new getAnime().start();
-            Log.d("dinges", "GETANIME UITGEVOERD?");
+            String inputText = editText_animeInput.getText().toString();
+            URL_STRING = URL_STRING + inputText;
+
+            new getAnimesFromSearch().start();
+            Log.d("dinges", "getAnimesFromSearch UITGEVOERD?");
         }
 
         return false;
     }
 
     @Override
-    public void onClick(View view) {
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        //get anime
+        Anime anime = animeList.get(position);
 
+        //create intent
+        Intent intent = new Intent(getContext(), AnimeActivity.class);
+        intent.putExtra("image_url", anime.getImage_url());
+        intent.putExtra("title", anime.getTitle());
+        intent.putExtra("episodes", anime.getEpisodes());
+        intent.putExtra("score", anime.getScore());
+        intent.putExtra("synopsis", anime.getSynopsis());
+
+        this.startActivity(intent);
     }
 
     public void updateDisplay() {
-        // set the textviews
-        textView_animeTitle.setText(tempAnime.getTitle());
-        textView_animeEpisodes.setText(String.valueOf(tempAnime.getEpisodes()));
+        if (animeList == null) {
+            editText_animeInput.setText("Unable to get results");
+            return;
+        }
 
-        Log.d("dinges", "UPDATEDISPLAY IS AF");
+        // create a List of Map<String, ?> objects
+        ArrayList<HashMap<String, String>> data = new ArrayList<HashMap<String, String>>();
+        for (Anime anime : animeList) {
+            HashMap<String, String> map = new HashMap<String, String>();
+            map.put("coverUrl", anime.getImage_url());
+            map.put("title", anime.getTitle());
+            data.add(map);
+        }
+
+        // create the resource, from, and to variables
+        int resource = R.layout.listview_anime;
+        String[] from = {"coverUrl", "title"};
+        int[] to = {R.id.coverImageView, R.id.titleTextView};
+
+        // create and set the adapter
+        SimpleAdapter adapter = new SimpleAdapter(getContext(), data, resource, from, to);
+        listView_animesListView.setAdapter(adapter);
+
+        Log.d("dinges", "Feed displayed");
     }
 
-    class getAnime extends Thread {
+    class getAnimesFromSearch extends Thread {
         @Override
         public void run() {
             Log.d("dinges", "WE ZIJN BINNEN GETANIME");
             HttpHandler sh = new HttpHandler();
             String jsonStr = sh.makeServiceCall(URL_STRING);
 
-            tempAnime = new Anime();
+            animeList = new ArrayList<Anime>();
+
             if (jsonStr != null) {
                 try {
                     JSONObject jsonObj = new JSONObject(jsonStr);
-                    String animeTitle = jsonObj.getString("title");
-                    int animeEpisodes = jsonObj.getInt("episodes");
+                    JSONArray results  = jsonObj.getJSONArray("results");
 
-                    tempAnime.setTitle(animeTitle);
-                    tempAnime.setEpisodes(animeEpisodes);
+                    for (int i = 0; i < results.length(); i++) {
+                        tempAnime = new Anime();
+                        JSONObject result = results.getJSONObject(i);
+
+                        tempAnime.setMal_id(result.getInt("mal_id"));
+                        tempAnime.setUrl(result.getString("url"));
+                        tempAnime.setImage_url(result.getString("image_url"));
+                        tempAnime.setTitle(result.getString("title"));
+                        tempAnime.setAiring(result.getBoolean("airing"));
+                        tempAnime.setSynopsis(result.getString("synopsis"));
+                        tempAnime.setType(result.getString("type"));
+                        tempAnime.setEpisodes(result.getInt("episodes"));
+                        tempAnime.setScore(result.getDouble("score"));
+                        tempAnime.setStart_date(result.getString("start_date"));
+                        tempAnime.setEnd_date(result.getString("end_date"));
+                        tempAnime.setMembers(result.getInt("members"));
+                        tempAnime.setRated(result.getString("rated"));
+
+                        animeList.add(tempAnime);
+                    }
 
                     Log.d("dinges", "tempanime is geladen g");
                 }
@@ -109,8 +164,8 @@ public class AnimeSearchFragment extends Fragment implements TextView.OnEditorAc
             getActivity().runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    AnimeSearchFragment.this.updateDisplay();
                     Log.d("dinges", "runOnUiThread");
+                    AnimeSearchFragment.this.updateDisplay();
                 }
             });
         }

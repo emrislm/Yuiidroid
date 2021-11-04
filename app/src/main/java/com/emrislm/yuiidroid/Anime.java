@@ -1,33 +1,48 @@
 package com.emrislm.yuiidroid;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+
 public class Anime {
 
     private int mal_id;
     private String url;
     private String image_url;
     private String title;
+    private Boolean airing;
+    private String synopsis;
     private String type;
     private int episodes;
-    private String status;
-    private String duration;
-    private String rating;
-    private float score;
+    private double score;
+    private String start_date;
+    private String end_date;
     private int members;
-    private int favorites;
-    private String synopsis;
+    private String rated;
 
-    public void setMal_id(int mal_id) {
-        this.mal_id = mal_id;
+    public String getStartDateFormatted() {
+        String[] split = start_date.split("T");
+        return split[0];
     }
+    public String getEndDateFormatted() {
+        String[] split = end_date.split("T");
+        return split[0];
+    }
+
     public int getMal_id() {
         return mal_id;
     }
-
-    public void setUrl(String url) {
-        this.url = url;
+    public void setMal_id(int mal_id) {
+        this.mal_id = mal_id;
     }
+
     public String getUrl() {
         return url;
+    }
+    public void setUrl(String url) {
+        this.url = url;
     }
 
     public String getImage_url() {
@@ -44,6 +59,20 @@ public class Anime {
         this.title = title;
     }
 
+    public Boolean getAiring() {
+        return airing;
+    }
+    public void setAiring(Boolean airing) {
+        this.airing = airing;
+    }
+
+    public String getSynopsis() {
+        return synopsis;
+    }
+    public void setSynopsis(String synopsis) {
+        this.synopsis = synopsis;
+    }
+
     public String getType() {
         return type;
     }
@@ -58,25 +87,23 @@ public class Anime {
         this.episodes = episodes;
     }
 
-    public String getStatus() {
-        return status;
-    }
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public String getRating() {
-        return rating;
-    }
-    public void setRating(String rating) {
-        this.rating = rating;
-    }
-
-    public float getScore() {
-        return score;
-    }
-    public void setScore(float score) {
+    public double getScore() { return score; }
+    public void setScore(double score) {
         this.score = score;
+    }
+
+    public String getStart_date() {
+        return start_date;
+    }
+    public void setStart_date(String start_date) {
+        this.start_date = start_date;
+    }
+
+    public String getEnd_date() {
+        return end_date;
+    }
+    public void setEnd_date(String end_date) {
+        this.end_date = end_date;
     }
 
     public int getMembers() {
@@ -86,24 +113,10 @@ public class Anime {
         this.members = members;
     }
 
-    public int getFavorites() {
-        return favorites;
+    public String getRated() {
+        return rated;
     }
-    public void setFavorites(int favorites) {
-        this.favorites = favorites;
-    }
-
-    public String getSynopsis() {
-        return synopsis;
-    }
-    public void setSynopsis(String synopsis) {
-        this.synopsis = synopsis;
-    }
-
-    public String getDuration() {
-        return duration;
-    }
-    public void setDuration(String duration) {
-        this.duration = duration;
+    public void setRated(String rated) {
+        this.rated = rated;
     }
 }

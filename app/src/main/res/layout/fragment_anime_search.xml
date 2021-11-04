@@ -25,50 +25,63 @@
         app:layout_constraintVertical_bias="0.0"
         tools:ignore="SpeakableTextPresentCheck" />
 
-    <TextView
-        android:id="@+id/animeTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="32dp"
-        android:layout_marginTop="52dp"
-        android:text="Title:"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/EditText_animeInput" />
-
-    <TextView
-        android:id="@+id/TextView_animeTitle"
+    <ListView
+        android:id="@+id/ListView_animesListView"
         android:layout_width="0dp"
-        android:layout_height="29dp"
-        android:layout_marginStart="60dp"
-        android:layout_marginEnd="32dp"
-        android:text="Naruto"
-        android:textSize="20sp"
-        app:layout_constraintBaseline_toBaselineOf="@+id/animeTitle"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/animeTitle" />
-
-    <TextView
-        android:id="@+id/animeEpisodes"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:layout_marginStart="32dp"
-        android:layout_marginTop="40dp"
-        android:text="Episodes:"
-        android:textSize="20sp"
-        android:textStyle="bold"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="32dp"
+        android:background="#f2f2f2"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/animeTitle" />
+        app:layout_constraintTop_toBottomOf="@+id/EditText_animeInput"
+        app:layout_constraintVertical_bias="1.0" />
 
-    <TextView
-        android:id="@+id/TextView_animeEpisodes"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:text="25"
-        android:textSize="20sp"
-        app:layout_constraintBaseline_toBaselineOf="@+id/animeEpisodes"
-        app:layout_constraintStart_toEndOf="@+id/animeEpisodes" />
+    <!--    <TextView-->
+<!--        android:id="@+id/animeTitle"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_marginStart="32dp"-->
+<!--        android:layout_marginTop="52dp"-->
+<!--        android:text="Title:"-->
+<!--        android:textSize="20sp"-->
+<!--        android:textStyle="bold"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintTop_toBottomOf="@+id/EditText_animeInput" />-->
+<!--    <TextView-->
+<!--        android:id="@+id/TextView_animeTitle"-->
+<!--        android:layout_width="0dp"-->
+<!--        android:layout_height="29dp"-->
+<!--        android:layout_marginStart="60dp"-->
+<!--        android:layout_marginEnd="32dp"-->
+<!--        android:text="Naruto"-->
+<!--        android:textSize="20sp"-->
+<!--        app:layout_constraintBaseline_toBaselineOf="@+id/animeTitle"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        app:layout_constraintStart_toEndOf="@+id/animeTitle" />-->
+
+<!--    <TextView-->
+<!--        android:id="@+id/animeEpisodes"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_marginStart="32dp"-->
+<!--        android:layout_marginTop="40dp"-->
+<!--        android:text="Episodes:"-->
+<!--        android:textSize="20sp"-->
+<!--        android:textStyle="bold"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintTop_toBottomOf="@+id/animeTitle" />-->
+<!--    <TextView-->
+<!--        android:id="@+id/TextView_animeEpisodes"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_marginStart="16dp"-->
+<!--        android:text="25"-->
+<!--        android:textSize="20sp"-->
+<!--        app:layout_constraintBaseline_toBaselineOf="@+id/animeEpisodes"-->
+<!--        app:layout_constraintStart_toEndOf="@+id/animeEpisodes" />-->
 
 </androidx.constraintlayout.widget.ConstraintLayout>
