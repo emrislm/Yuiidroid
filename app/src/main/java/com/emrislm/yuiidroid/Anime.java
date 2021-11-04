@@ -2,19 +2,19 @@ package com.emrislm.yuiidroid;
 
 public class Anime {
 
-    public int mal_id;
-    public String url;
-    public String image_url;
-    public String title;
-    public String type;
-    public int episodes;
-    public String status;
-    public String duration;
-    public String rating;
-    public float score;
-    public int members;
-    public int favorites;
-    public String synopsis;
+    private int mal_id;
+    private String url;
+    private String image_url;
+    private String title;
+    private String type;
+    private int episodes;
+    private String status;
+    private String duration;
+    private String rating;
+    private float score;
+    private int members;
+    private int favorites;
+    private String synopsis;
 
     public void setMal_id(int mal_id) {
         this.mal_id = mal_id;

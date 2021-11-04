@@ -39,12 +39,14 @@
 
     <TextView
         android:id="@+id/TextView_animeTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="120dp"
+        android:layout_width="0dp"
+        android:layout_height="29dp"
+        android:layout_marginStart="60dp"
+        android:layout_marginEnd="32dp"
         android:text="Naruto"
         android:textSize="20sp"
         app:layout_constraintBaseline_toBaselineOf="@+id/animeTitle"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/animeTitle" />
 
     <TextView
@@ -63,7 +65,7 @@
         android:id="@+id/TextView_animeEpisodes"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="80dp"
+        android:layout_marginStart="16dp"
         android:text="25"
         android:textSize="20sp"
         app:layout_constraintBaseline_toBaselineOf="@+id/animeEpisodes"
