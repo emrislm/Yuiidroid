@@ -5,7 +5,11 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
 import android.view.KeyEvent;
@@ -15,6 +19,7 @@ import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
 import android.widget.EditText;
+import android.widget.GridView;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
@@ -27,6 +32,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class AnimeSearchFragment extends Fragment implements TextView.OnEditorActionListener, AdapterView.OnItemClickListener {
 
@@ -36,7 +42,8 @@ public class AnimeSearchFragment extends Fragment implements TextView.OnEditorAc
 
     // define variables for the widgets
     private EditText editText_animeInput;
-    private ListView listView_animesListView;
+    private RecyclerView listView_animesListView;
+    //private ListView listView_animesListView;
 
     private static final String TAG = "AnimeSearchFragment";
 
@@ -54,11 +61,12 @@ public class AnimeSearchFragment extends Fragment implements TextView.OnEditorAc
 
         // get references to the widgets
         editText_animeInput = (EditText) view.findViewById(R.id.EditText_animeInput);
-        listView_animesListView = (ListView) view.findViewById(R.id.ListView_animesListView);
+        listView_animesListView = (RecyclerView) view.findViewById(R.id.ListView_animesListView);
+        //listView_animesListView = (ListView) view.findViewById(R.id.ListView_animesListView);
 
         // set the listeners
         editText_animeInput.setOnEditorActionListener(this);
-        listView_animesListView.setOnItemClickListener(this);
+        //listView_animesListView.setOnItemClickListener(this);
 
         return view;
     }
@@ -99,21 +107,36 @@ public class AnimeSearchFragment extends Fragment implements TextView.OnEditorAc
         }
 
         // create a List of Map<String, ?> objects
-        ArrayList<HashMap<String, String>> data = new ArrayList<HashMap<String, String>>();
+//        ArrayList<HashMap<String, String>> data = new ArrayList<HashMap<String, String>>();
+//        for (Anime anime : animeList) {
+//            HashMap<String, String> map = new HashMap<String, String>();
+//            map.put("coverUrl", anime.getImage_url());
+//            map.put("title", anime.getTitle());
+//            data.add(map);
+//        }
+        ArrayList<String> titles = new ArrayList<String>();
         for (Anime anime : animeList) {
-            HashMap<String, String> map = new HashMap<String, String>();
-            map.put("coverUrl", anime.getImage_url());
-            map.put("title", anime.getTitle());
-            data.add(map);
+            titles.add(anime.getTitle());
+            Log.d("dinges", anime.getTitle());
+        }
+        ArrayList<String> imgurls = new ArrayList<String>();
+        for (Anime anime : animeList) {
+            imgurls.add(anime.getImage_url());
+            Log.d("dinges", anime.getImage_url());
         }
 
         // create the resource, from, and to variables
-        int resource = R.layout.listview_anime;
-        String[] from = {"coverUrl", "title"};
-        int[] to = {R.id.coverImageView, R.id.titleTextView};
+//        int resource = R.layout.listview_anime;
+//        String[] from = {"coverUrl", "title"};
+//        int[] to = {R.id.coverImageView, R.id.titleTextView};
 
         // create and set the adapter
-        SimpleAdapter adapter = new SimpleAdapter(getContext(), data, resource, from, to);
+        //SimpleAdapter adapter = new SimpleAdapter(getContext(), data, resource, from, to);
+        //listView_animesListView.setAdapter(adapter);
+        Log.d("dinges", "JUIST VOOR DE ADAPTER");
+        Adapter adapter = new Adapter(getContext(), titles, imgurls);
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), 2, LinearLayoutManager.VERTICAL, false);
+        listView_animesListView.setLayoutManager(gridLayoutManager);
         listView_animesListView.setAdapter(adapter);
 
         Log.d("dinges", "Feed displayed");
@@ -171,3 +194,4 @@ public class AnimeSearchFragment extends Fragment implements TextView.OnEditorAc
         }
     }
 }
+
