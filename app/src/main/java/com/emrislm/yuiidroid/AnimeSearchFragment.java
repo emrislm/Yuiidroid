@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
@@ -36,7 +37,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class AnimeSearchFragment extends Fragment implements TextView.OnEditorActionListener, AdapterView.OnItemClickListener, View.OnClickListener {
+public class AnimeSearchFragment extends Fragment implements View.OnClickListener {
 
     private String URL_STRING = "https://api.jikan.moe/v3/search/anime?q=";
     private Anime tempAnime;
@@ -67,44 +68,33 @@ public class AnimeSearchFragment extends Fragment implements TextView.OnEditorAc
         editText_animeInput = (EditText) view.findViewById(R.id.EditText_animeInput);
         listView_animesListView = (RecyclerView) view.findViewById(R.id.ListView_animesListView);
         button_search = (ImageButton) view.findViewById(R.id.Button_search);
-        //listView_animesListView = (ListView) view.findViewById(R.id.ListView_animesListView);
 
         // set the listeners
-        editText_animeInput.setOnEditorActionListener(this);
         button_search.setOnClickListener(this);
-        //listView_animesListView.setOnItemClickListener(this);
+        listView_animesListView.addOnItemTouchListener(
+                new RecyclerItemClickListener(getActivity(), listView_animesListView, new RecyclerItemClickListener.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(View view, int position) {
+                        //get anime
+                        Anime anime = animeList.get(position);
+
+                        //create intent
+                        Intent intent = new Intent(getContext(), AnimeActivity.class);
+                        intent.putExtra("image_url", anime.getImage_url());
+                        intent.putExtra("title", anime.getTitle());
+                        intent.putExtra("episodes", anime.getEpisodes());
+                        intent.putExtra("score", anime.getScore());
+                        intent.putExtra("synopsis", anime.getSynopsis());
+
+                        getActivity().startActivity(intent);
+                    }
+
+                    @Override
+                    public void onLongItemClick(View view, int position) { }
+                })
+        );
 
         return view;
-    }
-
-    @Override
-    public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-        if (actionId == EditorInfo.IME_ACTION_DONE) {
-            Log.d("dinges", "DONE TOETS");
-//            String inputText = editText_animeInput.getText().toString();
-//            URL_STRING = URL_STRING + inputText;
-//
-//            new getAnimesFromSearch().start();
-//            Log.d("dinges", "getAnimesFromSearch UITGEVOERD?");
-        }
-
-        return false;
-    }
-
-    @Override
-    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        //get anime
-        Anime anime = animeList.get(position);
-
-        //create intent
-        Intent intent = new Intent(getContext(), AnimeActivity.class);
-        intent.putExtra("image_url", anime.getImage_url());
-        intent.putExtra("title", anime.getTitle());
-        intent.putExtra("episodes", anime.getEpisodes());
-        intent.putExtra("score", anime.getScore());
-        intent.putExtra("synopsis", anime.getSynopsis());
-
-        this.startActivity(intent);
     }
 
     public void updateDisplay() {
