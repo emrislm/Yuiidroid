@@ -21,6 +21,7 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridView;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
@@ -44,7 +45,7 @@ public class AnimeSearchFragment extends Fragment implements TextView.OnEditorAc
     // define variables for the widgets
     private EditText editText_animeInput;
     private RecyclerView listView_animesListView;
-    private Button button_search;
+    private ImageButton button_search;
     private Adapter adapter;
     //private ListView listView_animesListView;
 
@@ -65,7 +66,7 @@ public class AnimeSearchFragment extends Fragment implements TextView.OnEditorAc
         // get references to the widgets
         editText_animeInput = (EditText) view.findViewById(R.id.EditText_animeInput);
         listView_animesListView = (RecyclerView) view.findViewById(R.id.ListView_animesListView);
-        button_search = (Button) view.findViewById(R.id.Button_search);
+        button_search = (ImageButton) view.findViewById(R.id.Button_search);
         //listView_animesListView = (ListView) view.findViewById(R.id.ListView_animesListView);
 
         // set the listeners
@@ -123,15 +124,12 @@ public class AnimeSearchFragment extends Fragment implements TextView.OnEditorAc
         ArrayList<String> titles = new ArrayList<String>();
         for (Anime anime : animeList) {
             titles.add(anime.getTitle());
-            Log.d("dinges", anime.getTitle());
         }
         ArrayList<String> imgurls = new ArrayList<String>();
         for (Anime anime : animeList) {
             imgurls.add(anime.getImage_url());
-            Log.d("dinges", anime.getImage_url());
         }
 
-        Log.d("dinges", String.valueOf(titles.size()));
         // create the resource, from, and to variables
 //        int resource = R.layout.listview_anime;
 //        String[] from = {"coverUrl", "title"};
@@ -160,6 +158,8 @@ public class AnimeSearchFragment extends Fragment implements TextView.OnEditorAc
 
                 new getAnimesFromSearch().start();
                 Log.d("dinges", "getAnimesFromSearch UITGEVOERD?");
+
+                inputText = "";
                 break;
         }
     }
