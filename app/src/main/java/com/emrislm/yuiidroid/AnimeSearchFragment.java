@@ -18,6 +18,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ListView;
@@ -34,7 +35,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class AnimeSearchFragment extends Fragment implements TextView.OnEditorActionListener, AdapterView.OnItemClickListener {
+public class AnimeSearchFragment extends Fragment implements TextView.OnEditorActionListener, AdapterView.OnItemClickListener, View.OnClickListener {
 
     private String URL_STRING = "https://api.jikan.moe/v3/search/anime?q=";
     private Anime tempAnime;
@@ -43,6 +44,8 @@ public class AnimeSearchFragment extends Fragment implements TextView.OnEditorAc
     // define variables for the widgets
     private EditText editText_animeInput;
     private RecyclerView listView_animesListView;
+    private Button button_search;
+    private Adapter adapter;
     //private ListView listView_animesListView;
 
     private static final String TAG = "AnimeSearchFragment";
@@ -62,10 +65,12 @@ public class AnimeSearchFragment extends Fragment implements TextView.OnEditorAc
         // get references to the widgets
         editText_animeInput = (EditText) view.findViewById(R.id.EditText_animeInput);
         listView_animesListView = (RecyclerView) view.findViewById(R.id.ListView_animesListView);
+        button_search = (Button) view.findViewById(R.id.Button_search);
         //listView_animesListView = (ListView) view.findViewById(R.id.ListView_animesListView);
 
         // set the listeners
         editText_animeInput.setOnEditorActionListener(this);
+        button_search.setOnClickListener(this);
         //listView_animesListView.setOnItemClickListener(this);
 
         return view;
@@ -74,11 +79,12 @@ public class AnimeSearchFragment extends Fragment implements TextView.OnEditorAc
     @Override
     public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
         if (actionId == EditorInfo.IME_ACTION_DONE) {
-            String inputText = editText_animeInput.getText().toString();
-            URL_STRING = URL_STRING + inputText;
-
-            new getAnimesFromSearch().start();
-            Log.d("dinges", "getAnimesFromSearch UITGEVOERD?");
+            Log.d("dinges", "DONE TOETS");
+//            String inputText = editText_animeInput.getText().toString();
+//            URL_STRING = URL_STRING + inputText;
+//
+//            new getAnimesFromSearch().start();
+//            Log.d("dinges", "getAnimesFromSearch UITGEVOERD?");
         }
 
         return false;
@@ -102,7 +108,7 @@ public class AnimeSearchFragment extends Fragment implements TextView.OnEditorAc
 
     public void updateDisplay() {
         if (animeList == null) {
-            editText_animeInput.setText("Unable to get results");
+            Log.d("dinges", "ERR: Unable to get results");
             return;
         }
 
@@ -125,6 +131,7 @@ public class AnimeSearchFragment extends Fragment implements TextView.OnEditorAc
             Log.d("dinges", anime.getImage_url());
         }
 
+        Log.d("dinges", String.valueOf(titles.size()));
         // create the resource, from, and to variables
 //        int resource = R.layout.listview_anime;
 //        String[] from = {"coverUrl", "title"};
@@ -134,12 +141,27 @@ public class AnimeSearchFragment extends Fragment implements TextView.OnEditorAc
         //SimpleAdapter adapter = new SimpleAdapter(getContext(), data, resource, from, to);
         //listView_animesListView.setAdapter(adapter);
         Log.d("dinges", "JUIST VOOR DE ADAPTER");
-        Adapter adapter = new Adapter(getContext(), titles, imgurls);
-        GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), 2, LinearLayoutManager.VERTICAL, false);
+        adapter = new Adapter(getActivity(), titles, imgurls);
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(getActivity(), 2, RecyclerView.VERTICAL, false);
+
         listView_animesListView.setLayoutManager(gridLayoutManager);
         listView_animesListView.setAdapter(adapter);
 
         Log.d("dinges", "Feed displayed");
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.Button_search:
+                Log.d("dinges", "KNOP GEDRUKT");
+                String inputText = editText_animeInput.getText().toString();
+                URL_STRING = URL_STRING + inputText;
+
+                new getAnimesFromSearch().start();
+                Log.d("dinges", "getAnimesFromSearch UITGEVOERD?");
+                break;
+        }
     }
 
     class getAnimesFromSearch extends Thread {
@@ -194,4 +216,3 @@ public class AnimeSearchFragment extends Fragment implements TextView.OnEditorAc
         }
     }
 }
-

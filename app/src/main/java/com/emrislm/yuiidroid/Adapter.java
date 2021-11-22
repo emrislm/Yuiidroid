@@ -18,13 +18,13 @@ import java.util.List;
 
 public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
 
-    ArrayList<String> titles;
-    ArrayList<String> imgurls;
+    List<String> titles;
+    List<String> imgurls;
     LayoutInflater inflater;
-
     Context context;
 
-    public Adapter(Context context, ArrayList<String> titles, ArrayList<String> imgurls) {
+    public Adapter(Context context, List<String> titles, List<String> imgurls) {
+        this.context = context;
         this.titles = titles;
         this.imgurls = imgurls;
 
@@ -35,15 +35,13 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
     @Override
     public Adapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = inflater.inflate(R.layout.listview_anime, parent, false);
+
         return new ViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull Adapter.ViewHolder holder, int position) {
-        Log.d("dinges", titles.get(position));
         holder.title.setText(titles.get(position));
-
-        Log.d("dinges", titles.get(position));
         Picasso.get().load(imgurls.get(position)).into(holder.cover);
     }
 
