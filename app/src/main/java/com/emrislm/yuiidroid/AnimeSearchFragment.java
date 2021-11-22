@@ -5,37 +5,22 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.EditorInfo;
-import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.EditText;
-import android.widget.GridView;
 import android.widget.ImageButton;
-import android.widget.ListView;
-import android.widget.SimpleAdapter;
-import android.widget.TextView;
-
-import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 
 public class AnimeSearchFragment extends Fragment implements View.OnClickListener {
 
@@ -48,7 +33,6 @@ public class AnimeSearchFragment extends Fragment implements View.OnClickListene
     private RecyclerView listView_animesListView;
     private ImageButton button_search;
     private Adapter adapter;
-    //private ListView listView_animesListView;
 
     private static final String TAG = "AnimeSearchFragment";
 
@@ -103,14 +87,7 @@ public class AnimeSearchFragment extends Fragment implements View.OnClickListene
             return;
         }
 
-        // create a List of Map<String, ?> objects
-//        ArrayList<HashMap<String, String>> data = new ArrayList<HashMap<String, String>>();
-//        for (Anime anime : animeList) {
-//            HashMap<String, String> map = new HashMap<String, String>();
-//            map.put("coverUrl", anime.getImage_url());
-//            map.put("title", anime.getTitle());
-//            data.add(map);
-//        }
+        // create List objects
         ArrayList<String> titles = new ArrayList<String>();
         for (Anime anime : animeList) {
             titles.add(anime.getTitle());
@@ -120,15 +97,7 @@ public class AnimeSearchFragment extends Fragment implements View.OnClickListene
             imgurls.add(anime.getImage_url());
         }
 
-        // create the resource, from, and to variables
-//        int resource = R.layout.listview_anime;
-//        String[] from = {"coverUrl", "title"};
-//        int[] to = {R.id.coverImageView, R.id.titleTextView};
-
         // create and set the adapter
-        //SimpleAdapter adapter = new SimpleAdapter(getContext(), data, resource, from, to);
-        //listView_animesListView.setAdapter(adapter);
-        Log.d("dinges", "JUIST VOOR DE ADAPTER");
         adapter = new Adapter(getActivity(), titles, imgurls);
         GridLayoutManager gridLayoutManager = new GridLayoutManager(getActivity(), 2, RecyclerView.VERTICAL, false);
 
@@ -147,7 +116,7 @@ public class AnimeSearchFragment extends Fragment implements View.OnClickListene
                 URL_STRING = URL_STRING + inputText;
 
                 new getAnimesFromSearch().start();
-                Log.d("dinges", "getAnimesFromSearch UITGEVOERD?");
+                Log.d("dinges", "getAnimesFromSearch UITGEVOERD");
 
                 inputText = "";
                 break;
@@ -157,7 +126,6 @@ public class AnimeSearchFragment extends Fragment implements View.OnClickListene
     class getAnimesFromSearch extends Thread {
         @Override
         public void run() {
-            Log.d("dinges", "WE ZIJN BINNEN GETANIME");
             HttpHandler sh = new HttpHandler();
             String jsonStr = sh.makeServiceCall(URL_STRING);
 
@@ -189,7 +157,7 @@ public class AnimeSearchFragment extends Fragment implements View.OnClickListene
                         animeList.add(tempAnime);
                     }
 
-                    Log.d("dinges", "tempanime is geladen g");
+                    Log.d("dinges", "tempanime is geladen");
                 }
                 catch (JSONException e) {
                     Log.d("dinges", e.toString());
