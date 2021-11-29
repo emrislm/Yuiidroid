@@ -18,6 +18,7 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
+
             <ImageView
                 android:id="@+id/coverImageView"
                 android:layout_width="match_parent"
@@ -34,7 +35,7 @@
 
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="135dp"
+                android:layout_height="200dp"
                 android:alpha=".85"
                 android:layout_alignParentBottom="true"
                 android:background="@drawable/gradient">
@@ -48,9 +49,9 @@
                     android:layout_marginStart="10dp"
                     android:layout_marginBottom="10dp"
                     android:shadowColor="@color/black"
-                    android:shadowDx="0"
-                    android:shadowDy="0"
-                    android:shadowRadius="1"
+                    android:shadowDx="3"
+                    android:shadowDy="3"
+                    android:shadowRadius="2"
                     android:text="TextView"
                     android:textColor="@color/white" />
             </RelativeLayout>
