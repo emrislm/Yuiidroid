@@ -8,10 +8,10 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 
@@ -32,7 +32,8 @@ public class AnimeActivity extends AppCompatActivity {
     TextView scoreTextView;
     TextView descriptionTextView;
     RecyclerView staffListView;
-    ListView statsLinearLayout;
+    ListView statsListView;
+    ListView commentsListView;
 
     int MAL_ID;
 
@@ -40,7 +41,9 @@ public class AnimeActivity extends AppCompatActivity {
     ArrayList<AnimeStaff> tempStaffList;
 
     AnimeStats tempStats;
-    ArrayList<Integer> tempStatsList;
+
+    AnimeComment tempComment;
+    ArrayList<AnimeComment> tempCommentsList;
 
     AdapterStaff adapter;
 
@@ -56,7 +59,8 @@ public class AnimeActivity extends AppCompatActivity {
         scoreTextView = (TextView) findViewById(R.id.activity_scoreTextView);
         descriptionTextView = (TextView) findViewById(R.id.activity_descriptionTextView);
         staffListView = (RecyclerView) findViewById(R.id.activity_staffRecyclerView);
-        statsLinearLayout = (ListView) findViewById(R.id.statsListView);
+        statsListView = (ListView) findViewById(R.id.statsListView);
+        commentsListView = (ListView) findViewById(R.id.commentsListView);
 
         MAL_ID = getAnime();
         new GetData().start();
@@ -67,6 +71,7 @@ public class AnimeActivity extends AppCompatActivity {
         public void run() {
             getStaff(MAL_ID);
             getStats(MAL_ID);
+            getComments(MAL_ID);
 
             runOnUiThread(new Runnable() {
                 @Override
@@ -80,10 +85,40 @@ public class AnimeActivity extends AppCompatActivity {
     public void updateDisplay() {
         displayStaff();
         displayStats();
+        displayComments();
     }
 
+    //-----------------------------------------DISPLAY FUNC-------------------------------------
+    public void displayComments() {
+        if (tempComment == null) {
+            Toast toast = Toast.makeText(this, "No comments found", Toast.LENGTH_LONG);
+            toast.show();
+
+            return;
+        }
+
+        ArrayList<HashMap<String, String>> data = new ArrayList<HashMap<String, String>>();
+        for (AnimeComment comment : tempCommentsList) {
+            HashMap<String, String> map = new HashMap<String, String>();
+            map.put("title", comment.getTitle());
+            map.put("date_posted", comment.getPostedDateFormatted());
+            map.put("author", comment.getAuthor());
+            map.put("replies", String.valueOf(comment.getReplies()));
+            data.add(map);
+        }
+
+        int resource = R.layout.listview_comments;
+        String[] from = { "title", "date_posted", "author", "replies" };
+        int[] to = { R.id.comment_title, R.id.comment_date, R.id.comment_author, R.id.comment_replies };
+
+        // create and set the adapter
+        SimpleAdapter adapter = new SimpleAdapter(this, data, resource, from, to);
+        commentsListView.setAdapter(adapter);
+    }
     public void displayStats() {
         if (tempStats == null) {
+            Toast toast = Toast.makeText(this, "No stats found", Toast.LENGTH_LONG);
+            toast.show();
             return;
         }
 
@@ -102,11 +137,15 @@ public class AnimeActivity extends AppCompatActivity {
         int[] to = { R.id.statsWatching, R.id.statsCompleted, R.id.statsOnHold, R.id.statsDropped, R.id.statsPlanToWatch, R.id.statsTotal };
 
         SimpleAdapter adapter = new SimpleAdapter(this, data, resource, from, to);
-        statsLinearLayout.setAdapter(adapter);
+        statsListView.setAdapter(adapter);
     }
-
     public void displayStaff() {
-        // create List objects
+        if (tempStaff == null) {
+            Toast toast = Toast.makeText(this, "No staffmembers found", Toast.LENGTH_LONG);
+            toast.show();
+            return;
+        }
+
         ArrayList<String> roles = new ArrayList<String>();
         for (AnimeStaff staff : tempStaffList) {
             roles.add(staff.getStaffRole());
@@ -127,42 +166,44 @@ public class AnimeActivity extends AppCompatActivity {
         staffListView.setLayoutManager(gridLayoutManager);
         staffListView.setAdapter(adapter);
     }
+    //-----------------------------------------END DISPLAY FUNC---------------------------------
 
-    public void getNews(int id) {
-        String STAFFURL = BASEURL + String.valueOf(id) + "/news";
+    //-----------------------------------------DATA GETTERS-------------------------------------
+    public void getComments(int id) {
+        String COMMENTURL = BASEURL + String.valueOf(id) + "/forum";
 
         HttpHandler sh = new HttpHandler();
-        String jsonStr = sh.makeServiceCall(STAFFURL);
+        String jsonStr = sh.makeServiceCall(COMMENTURL);
 
-        tempStatsList = new ArrayList<Integer>();
+        tempCommentsList = new ArrayList<>();
 
         if (jsonStr != null) {
             try {
                 JSONObject jsonObj = new JSONObject(jsonStr);
-                tempStats = new AnimeStats();
+                JSONArray commentResults  = jsonObj.getJSONArray("topics");
 
-                tempStats.setWatching(jsonObj.getInt("watching"));
-                tempStats.setCompleted(jsonObj.getInt("completed"));
-                tempStats.setOn_hold(jsonObj.getInt("on_hold"));
-                tempStats.setDropped(jsonObj.getInt("dropped"));
-                tempStats.setPlan_to_watch(jsonObj.getInt("plan_to_watch"));
-                tempStats.setTotal(jsonObj.getInt("total"));
+                for (int i = 0; i < commentResults.length(); i++) {
+                    tempComment = new AnimeComment();
+                    JSONObject comment = commentResults.getJSONObject(i);
 
-                Log.d("det", "tempstafflist is gevuld");
+                    tempComment.setTitle(comment.getString("title"));
+                    tempComment.setDate_posted(comment.getString("date_posted"));
+                    tempComment.setAuthor(comment.getString("author_name"));
+                    tempComment.setReplies(comment.getInt("replies"));
+
+                    tempCommentsList.add(tempComment);
+                }
             }
             catch (JSONException e) {
                 Log.d("det", e.toString());
             }
         }
     }
-
     public void getStats(int id) {
-        String STAFFURL = BASEURL + String.valueOf(id) + "/stats";
+        String STATSURL = BASEURL + String.valueOf(id) + "/stats";
 
         HttpHandler sh = new HttpHandler();
-        String jsonStr = sh.makeServiceCall(STAFFURL);
-
-        tempStatsList = new ArrayList<Integer>();
+        String jsonStr = sh.makeServiceCall(STATSURL);
 
         if (jsonStr != null) {
             try {
@@ -175,22 +216,19 @@ public class AnimeActivity extends AppCompatActivity {
                 tempStats.setDropped(jsonObj.getInt("dropped"));
                 tempStats.setPlan_to_watch(jsonObj.getInt("plan_to_watch"));
                 tempStats.setTotal(jsonObj.getInt("total"));
-
-                Log.d("det", "tempstafflist is gevuld");
             }
             catch (JSONException e) {
                 Log.d("det", e.toString());
             }
         }
     }
-
     public void getStaff(int id) {
         String STAFFURL = BASEURL + String.valueOf(id) + "/characters_staff";
 
         HttpHandler sh = new HttpHandler();
         String jsonStr = sh.makeServiceCall(STAFFURL);
 
-        tempStaffList = new ArrayList<AnimeStaff>();
+        tempStaffList = new ArrayList<>();
 
         if (jsonStr != null) {
             try {
@@ -207,15 +245,12 @@ public class AnimeActivity extends AppCompatActivity {
 
                     tempStaffList.add(tempStaff);
                 }
-
-                Log.d("det", "tempstafflist is gevuld");
             }
             catch (JSONException e) {
                 Log.d("det", e.toString());
             }
         }
     }
-
     public int getAnime() {
         // get the intent
         Intent intent = getIntent();
@@ -237,4 +272,5 @@ public class AnimeActivity extends AppCompatActivity {
 
         return mal_id;
     }
+    //-----------------------------------------END DATA GETTERS---------------------------------
 }
