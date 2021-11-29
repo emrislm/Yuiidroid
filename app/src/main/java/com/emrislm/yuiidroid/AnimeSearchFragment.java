@@ -5,6 +5,7 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -39,6 +40,8 @@ public class AnimeSearchFragment extends Fragment implements View.OnClickListene
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
     }
 
     @Nullable
@@ -81,6 +84,22 @@ public class AnimeSearchFragment extends Fragment implements View.OnClickListene
         return view;
     }
 
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.Button_search:
+                Log.d("dinges", "KNOP GEDRUKT");
+                String inputText = editText_animeInput.getText().toString();
+                URL_STRING = URL_STRING + inputText;
+
+                new getAnimesFromSearch().start();
+                Log.d("dinges", "getAnimesFromSearch UITGEVOERD");
+
+                inputText = "";
+                break;
+        }
+    }
+
     public void updateDisplay() {
         if (animeList == null) {
             Log.d("dinges", "ERR: Unable to get results");
@@ -107,62 +126,53 @@ public class AnimeSearchFragment extends Fragment implements View.OnClickListene
         Log.d("dinges", "Feed displayed");
     }
 
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.Button_search:
-                Log.d("dinges", "KNOP GEDRUKT");
-                String inputText = editText_animeInput.getText().toString();
-                URL_STRING = URL_STRING + inputText;
 
-                new getAnimesFromSearch().start();
-                Log.d("dinges", "getAnimesFromSearch UITGEVOERD");
+    public void loopResponseFillList() {
+        HttpHandler sh = new HttpHandler();
+        String jsonStr = sh.makeServiceCall(URL_STRING);
 
-                inputText = "";
-                break;
+        animeList = new ArrayList<Anime>();
+
+        if (jsonStr != null) {
+            try {
+                JSONObject jsonObj = new JSONObject(jsonStr);
+                JSONArray results  = jsonObj.getJSONArray("results");
+
+                for (int i = 0; i < results.length(); i++) {
+                    tempAnime = new Anime();
+                    JSONObject result = results.getJSONObject(i);
+
+                    tempAnime.setMal_id(result.getInt("mal_id"));
+                    tempAnime.setUrl(result.getString("url"));
+                    tempAnime.setImage_url(result.getString("image_url"));
+                    tempAnime.setTitle(result.getString("title"));
+                    tempAnime.setAiring(result.getBoolean("airing"));
+                    tempAnime.setSynopsis(result.getString("synopsis"));
+                    tempAnime.setType(result.getString("type"));
+                    tempAnime.setEpisodes(result.getInt("episodes"));
+                    tempAnime.setScore(result.getDouble("score"));
+                    tempAnime.setStart_date(result.getString("start_date"));
+                    tempAnime.setEnd_date(result.getString("end_date"));
+                    tempAnime.setMembers(result.getInt("members"));
+                    tempAnime.setRated(result.getString("rated"));
+
+                    animeList.add(tempAnime);
+                }
+
+                Log.d("dinges", "tempanime is gevuld");
+            }
+            catch (JSONException e) {
+                Log.d("dinges", e.toString());
+            }
         }
     }
 
     class getAnimesFromSearch extends Thread {
         @Override
         public void run() {
-            HttpHandler sh = new HttpHandler();
-            String jsonStr = sh.makeServiceCall(URL_STRING);
 
-            animeList = new ArrayList<Anime>();
-
-            if (jsonStr != null) {
-                try {
-                    JSONObject jsonObj = new JSONObject(jsonStr);
-                    JSONArray results  = jsonObj.getJSONArray("results");
-
-                    for (int i = 0; i < results.length(); i++) {
-                        tempAnime = new Anime();
-                        JSONObject result = results.getJSONObject(i);
-
-                        tempAnime.setMal_id(result.getInt("mal_id"));
-                        tempAnime.setUrl(result.getString("url"));
-                        tempAnime.setImage_url(result.getString("image_url"));
-                        tempAnime.setTitle(result.getString("title"));
-                        tempAnime.setAiring(result.getBoolean("airing"));
-                        tempAnime.setSynopsis(result.getString("synopsis"));
-                        tempAnime.setType(result.getString("type"));
-                        tempAnime.setEpisodes(result.getInt("episodes"));
-                        tempAnime.setScore(result.getDouble("score"));
-                        tempAnime.setStart_date(result.getString("start_date"));
-                        tempAnime.setEnd_date(result.getString("end_date"));
-                        tempAnime.setMembers(result.getInt("members"));
-                        tempAnime.setRated(result.getString("rated"));
-
-                        animeList.add(tempAnime);
-                    }
-
-                    Log.d("dinges", "tempanime is geladen");
-                }
-                catch (JSONException e) {
-                    Log.d("dinges", e.toString());
-                }
-            }
+            //loop the json + fill arraylist with anime
+            loopResponseFillList();
 
             getActivity().runOnUiThread(new Runnable() {
                 @Override
