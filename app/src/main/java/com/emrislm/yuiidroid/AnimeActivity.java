@@ -5,14 +5,12 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.text.PrecomputedText;
 import android.util.Log;
-import android.view.View;
-import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
@@ -22,10 +20,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
-import javax.xml.transform.Result;
-
-public class AnimeActivity extends AppCompatActivity implements View.OnClickListener {
+public class AnimeActivity extends AppCompatActivity {
 
     String BASEURL = "https://api.jikan.moe/v3/anime/";
 
@@ -35,11 +32,15 @@ public class AnimeActivity extends AppCompatActivity implements View.OnClickList
     TextView scoreTextView;
     TextView descriptionTextView;
     RecyclerView staffListView;
-    ImageButton button;
+    ListView statsLinearLayout;
+
+    int MAL_ID;
 
     AnimeStaff tempStaff;
     ArrayList<AnimeStaff> tempStaffList;
-    long MAL_ID;
+
+    AnimeStats tempStats;
+    ArrayList<Integer> tempStatsList;
 
     AdapterStaff adapter;
 
@@ -55,36 +56,21 @@ public class AnimeActivity extends AppCompatActivity implements View.OnClickList
         scoreTextView = (TextView) findViewById(R.id.activity_scoreTextView);
         descriptionTextView = (TextView) findViewById(R.id.activity_descriptionTextView);
         staffListView = (RecyclerView) findViewById(R.id.activity_staffRecyclerView);
-        button = (ImageButton) findViewById(R.id.Button_get);
-        button.setOnClickListener(this);
+        statsLinearLayout = (ListView) findViewById(R.id.statsListView);
 
-//        getAnime();
-//        new GetData().start();
-    }
-
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.Button_get:
-                Log.d("det", "BUTTON");
-                getAnime();
-                //getStaff(12563);
-                new GetData().start();
-                break;
-        }
+        MAL_ID = getAnime();
+        new GetData().start();
     }
 
     class GetData extends Thread {
         @Override
         public void run() {
-            Log.d("det","Run in thread");
-
-            getStaff(1);
+            getStaff(MAL_ID);
+            getStats(MAL_ID);
 
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    Log.d("det", "runOnUiThread");
                     AnimeActivity.this.updateDisplay();
                 }
             });
@@ -92,6 +78,34 @@ public class AnimeActivity extends AppCompatActivity implements View.OnClickList
     }
 
     public void updateDisplay() {
+        displayStaff();
+        displayStats();
+    }
+
+    public void displayStats() {
+        if (tempStats == null) {
+            return;
+        }
+
+        ArrayList<HashMap<String, Integer>> data = new ArrayList<HashMap<String, Integer>>();
+        HashMap<String, Integer> map = new HashMap<String, Integer>();
+        map.put("watching", tempStats.getWatching());
+        map.put("completed", tempStats.getCompleted());
+        map.put("on_hold", tempStats.getOn_hold());
+        map.put("dropped", tempStats.getDropped());
+        map.put("plan_to_watch", tempStats.getPlan_to_watch());
+        map.put("total", tempStats.getTotal());
+        data.add(map);
+
+        int resource = R.layout.listview_stats;
+        String[] from = { "watching", "completed", "on_hold", "dropped", "plan_to_watch", "total" };
+        int[] to = { R.id.statsWatching, R.id.statsCompleted, R.id.statsOnHold, R.id.statsDropped, R.id.statsPlanToWatch, R.id.statsTotal };
+
+        SimpleAdapter adapter = new SimpleAdapter(this, data, resource, from, to);
+        statsLinearLayout.setAdapter(adapter);
+    }
+
+    public void displayStaff() {
         // create List objects
         ArrayList<String> roles = new ArrayList<String>();
         for (AnimeStaff staff : tempStaffList) {
@@ -112,11 +126,65 @@ public class AnimeActivity extends AppCompatActivity implements View.OnClickList
 
         staffListView.setLayoutManager(gridLayoutManager);
         staffListView.setAdapter(adapter);
-
-        Log.d("det", "Feed displayed");
     }
 
-    public void getStaff(long id) {
+    public void getNews(int id) {
+        String STAFFURL = BASEURL + String.valueOf(id) + "/news";
+
+        HttpHandler sh = new HttpHandler();
+        String jsonStr = sh.makeServiceCall(STAFFURL);
+
+        tempStatsList = new ArrayList<Integer>();
+
+        if (jsonStr != null) {
+            try {
+                JSONObject jsonObj = new JSONObject(jsonStr);
+                tempStats = new AnimeStats();
+
+                tempStats.setWatching(jsonObj.getInt("watching"));
+                tempStats.setCompleted(jsonObj.getInt("completed"));
+                tempStats.setOn_hold(jsonObj.getInt("on_hold"));
+                tempStats.setDropped(jsonObj.getInt("dropped"));
+                tempStats.setPlan_to_watch(jsonObj.getInt("plan_to_watch"));
+                tempStats.setTotal(jsonObj.getInt("total"));
+
+                Log.d("det", "tempstafflist is gevuld");
+            }
+            catch (JSONException e) {
+                Log.d("det", e.toString());
+            }
+        }
+    }
+
+    public void getStats(int id) {
+        String STAFFURL = BASEURL + String.valueOf(id) + "/stats";
+
+        HttpHandler sh = new HttpHandler();
+        String jsonStr = sh.makeServiceCall(STAFFURL);
+
+        tempStatsList = new ArrayList<Integer>();
+
+        if (jsonStr != null) {
+            try {
+                JSONObject jsonObj = new JSONObject(jsonStr);
+                tempStats = new AnimeStats();
+
+                tempStats.setWatching(jsonObj.getInt("watching"));
+                tempStats.setCompleted(jsonObj.getInt("completed"));
+                tempStats.setOn_hold(jsonObj.getInt("on_hold"));
+                tempStats.setDropped(jsonObj.getInt("dropped"));
+                tempStats.setPlan_to_watch(jsonObj.getInt("plan_to_watch"));
+                tempStats.setTotal(jsonObj.getInt("total"));
+
+                Log.d("det", "tempstafflist is gevuld");
+            }
+            catch (JSONException e) {
+                Log.d("det", e.toString());
+            }
+        }
+    }
+
+    public void getStaff(int id) {
         String STAFFURL = BASEURL + String.valueOf(id) + "/characters_staff";
 
         HttpHandler sh = new HttpHandler();
@@ -148,12 +216,12 @@ public class AnimeActivity extends AppCompatActivity implements View.OnClickList
         }
     }
 
-    public void getAnime() {
+    public int getAnime() {
         // get the intent
         Intent intent = getIntent();
 
         // get data from the intent
-        long mal_id = intent.getLongExtra("mal_id", 0);
+        int mal_id = intent.getIntExtra("mal_id", 0);
         String coverUrl = intent.getStringExtra("image_url");
         String title = intent.getStringExtra("title");
         String episodes = intent.getIntExtra("episodes", 0) + " Episodes";
@@ -167,6 +235,6 @@ public class AnimeActivity extends AppCompatActivity implements View.OnClickList
         scoreTextView.setText(String.valueOf(score));
         descriptionTextView.setText(description);
 
-        MAL_ID = mal_id;
+        return mal_id;
     }
 }

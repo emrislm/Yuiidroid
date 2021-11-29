@@ -10,18 +10,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <ImageButton
-            android:id="@+id/Button_get"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
-            android:backgroundTint="#5C15AE"
-            android:src="@drawable/ic_baseline_search_24"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:ignore="SpeakableTextPresentCheck" />
-
         <ImageView
             android:id="@+id/activity_coverImageView"
             android:layout_width="150dp"
@@ -35,16 +23,17 @@
 
         <TextView
             android:id="@+id/activity_titleTextView"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginTop="24dp"
+            android:layout_marginEnd="24dp"
             android:paddingBottom="10dp"
             android:text="Title"
             android:textSize="25sp"
+            app:layout_constraintEnd_toStartOf="@+id/textView2"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/activity_coverImageView" />
-
         <TextView
             android:id="@+id/activity_episodesTextview"
             android:layout_width="wrap_content"
@@ -53,7 +42,6 @@
             android:text="xxx Episodes"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/activity_titleTextView" />
-
         <TextView
             android:id="@+id/textView2"
             android:layout_width="wrap_content"
@@ -64,7 +52,6 @@
             android:text="Score"
             app:layout_constraintBaseline_toBaselineOf="@+id/activity_titleTextView"
             app:layout_constraintEnd_toEndOf="parent" />
-
         <TextView
             android:id="@+id/activity_scoreTextView"
             android:layout_width="wrap_content"
@@ -73,7 +60,6 @@
             android:text="x.xx"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textView2" />
-
         <TextView
             android:id="@+id/activity_descriptionTextView"
             android:layout_width="0dp"
@@ -101,18 +87,87 @@
             android:textSize="20sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/activity_descriptionTextView" />
-
-
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/activity_staffRecyclerView"
             android:layout_width="0dp"
-            android:layout_height="150dp"
+            android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
             android:layout_marginTop="8dp"
             android:background="#BBDEFB"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textView3" />
+
+        <TextView
+            android:id="@+id/textView4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="24dp"
+            android:fontFamily="sans-serif"
+            android:text="stats"
+            android:textAllCaps="true"
+            android:textColor="#2196F3"
+            android:textFontWeight="700"
+            android:textSize="20sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/activity_staffRecyclerView" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#BBDEFB"
+            android:padding="15dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView4"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:layout_width="125dp"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="sans-serif"
+                    android:textFontWeight="500"
+                    android:text="Completed:" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="sans-serif"
+                    android:textFontWeight="500"
+                    android:text="Dropped:" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="sans-serif"
+                    android:textFontWeight="500"
+                    android:text="On-Hold:" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="sans-serif"
+                    android:textFontWeight="500"
+                    android:text="Plan to watch:" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="sans-serif"
+                    android:textFontWeight="500"
+                    android:text="Watching:" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="sans-serif"
+                    android:textFontWeight="500"
+                    android:text="Total:" />
+            </LinearLayout>
+            <ListView
+                android:id="@+id/statsListView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical" />
+        </LinearLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

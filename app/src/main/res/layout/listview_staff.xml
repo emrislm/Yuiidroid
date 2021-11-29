@@ -5,10 +5,7 @@
     android:layout_width="wrap_content"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:paddingTop="5dp"
-    android:paddingBottom="5dp"
-    android:paddingLeft="10dp"
-    android:paddingRight="10dp">
+    android:padding="15dp">
 
     <androidx.cardview.widget.CardView
         android:id="@+id/card_view"
