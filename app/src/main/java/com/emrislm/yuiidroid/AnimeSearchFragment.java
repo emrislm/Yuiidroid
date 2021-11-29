@@ -67,6 +67,7 @@ public class AnimeSearchFragment extends Fragment implements View.OnClickListene
 
                         //create intent
                         Intent intent = new Intent(getContext(), AnimeActivity.class);
+                        intent.putExtra("mal_id", anime.getMal_id());
                         intent.putExtra("image_url", anime.getImage_url());
                         intent.putExtra("title", anime.getTitle());
                         intent.putExtra("episodes", anime.getEpisodes());
@@ -127,7 +128,7 @@ public class AnimeSearchFragment extends Fragment implements View.OnClickListene
     }
 
 
-    public void loopResponseFillList() {
+    public void getAnimeResults() {
         HttpHandler sh = new HttpHandler();
         String jsonStr = sh.makeServiceCall(URL_STRING);
 
@@ -172,7 +173,7 @@ public class AnimeSearchFragment extends Fragment implements View.OnClickListene
         public void run() {
 
             //loop the json + fill arraylist with anime
-            loopResponseFillList();
+            getAnimeResults();
 
             getActivity().runOnUiThread(new Runnable() {
                 @Override
