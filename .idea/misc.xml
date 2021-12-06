@@ -4,13 +4,13 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="..\:/Z_School/3ICT/Mobiele_Apps2/Yuiidroid/app/src/main/res/drawable/gradient.xml" value="0.3880208333333333" />
-        <entry key="..\:/Z_School/3ICT/Mobiele_Apps2/Yuiidroid/app/src/main/res/layout/activity_anime.xml" value="0.35539714867617106" />
+        <entry key="..\:/Z_School/3ICT/Mobiele_Apps2/Yuiidroid/app/src/main/res/layout/activity_anime.xml" value="0.3595706618962433" />
         <entry key="..\:/Z_School/3ICT/Mobiele_Apps2/Yuiidroid/app/src/main/res/layout/activity_main.xml" value="0.371875" />
         <entry key="..\:/Z_School/3ICT/Mobiele_Apps2/Yuiidroid/app/src/main/res/layout/fragment_anime_search.xml" value="0.371875" />
         <entry key="..\:/Z_School/3ICT/Mobiele_Apps2/Yuiidroid/app/src/main/res/layout/listview_anime.xml" value="0.33" />
         <entry key="..\:/Z_School/3ICT/Mobiele_Apps2/Yuiidroid/app/src/main/res/layout/listview_comments.xml" value="0.5" />
         <entry key="..\:/Z_School/3ICT/Mobiele_Apps2/Yuiidroid/app/src/main/res/layout/listview_staff.xml" value="0.33" />
-        <entry key="..\:/Z_School/3ICT/Mobiele_Apps2/Yuiidroid/app/src/main/res/layout/listview_stats.xml" value="0.371875" />
+        <entry key="..\:/Z_School/3ICT/Mobiele_Apps2/Yuiidroid/app/src/main/res/layout/listview_stats.xml" value="0.75" />
       </map>
     </option>
   </component>
